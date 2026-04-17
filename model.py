@@ -5,7 +5,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import pytorch_lightning as pl
 from torch.utils.data import Dataset
 import math
-from dataset import dataset, pad_idx, text_vocab, sql_vocab
+from dataset import dataset, pad_idx, parse_schema, text_vocab, sql_vocab
 from config import d_model, n_heads, n_layers, d_ff, dropout, max_seq_len
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -215,10 +215,12 @@ class Transformer(pl.LightningModule):
             results.append(sql)
         return results
 
-    def translate(self, sentence: str, max_len=50):
+    def translate(self, sentence: str,schema: str, max_len=50):
         was_training = self.training
         self.eval()
 
+        if schema:
+            sentence = f"{sentence} | {parse_schema(schema)}"
 
         tokens       = self.dataset.text_vocab.encode(sentence).unsqueeze(0).to(self.device)
         src_pad_mask = (tokens == self.pad_idx)
