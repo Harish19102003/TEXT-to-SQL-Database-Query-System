@@ -20,16 +20,19 @@ TEXT-to-SQL Database Query/
 
 ---
 
-##  Usage
+##  Setup
 
-### Install Dependencies
+## Installation
+
 ```bash
+git clone https://github.com/Harish19102003/TEXT-to-SQL-Database-Query-System.git
+cd TEXT-to-SQL-Database-Query-System
 pip install -r requirements.txt
 ```
 
 ## Train :
 ```bash
-python -m train.py
+python -m train.p
 ```
 
 ## Evaluation
@@ -42,3 +45,10 @@ python -m utils.py
 ```bash
 tensorboard --logdir tb_logs
 ```
+## Results
+
+| Metric | Score |
+|-------|------|
+| BLEU Score | 63.6% |
+| Train Accuracy | 89.7% |
+| Validation Accuracy | 89.0% |
