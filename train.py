@@ -10,6 +10,11 @@ from dataset import train_loader, val_loader
 from model import model
 import warnings
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+if device.type == "cuda":
+    torch.set_float32_matmul_precision( 'high')
+
 output_dir = Path("checkpoints")
 early_stop = EarlyStopping(
         monitor  = 'val_loss',
