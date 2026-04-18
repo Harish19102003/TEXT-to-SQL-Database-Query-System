@@ -22,7 +22,7 @@ TEXT-to-SQL Database Query/
 
 ##  Setup
 
-## Installation
+### Installation :
 
 ```bash
 git clone https://github.com/Harish19102003/TEXT-to-SQL-Database-Query-System.git
@@ -30,22 +30,22 @@ cd TEXT-to-SQL-Database-Query-System
 pip install -r requirements.txt
 ```
 
-## Train :
+### Train :
 ```bash
-python -m train.p
+python -m train.py
 ```
 
-## Evaluation
+## Evaluation :
 Using BLEU Score
 ```bash
 python -m utils.py
 ```
 
-## TensorBoard
+### TensorBoard :
 ```bash
 tensorboard --logdir tb_logs
 ```
-## Results
+## Results :
 
 | Metric | Score |
 |-------|------|
