@@ -6,34 +6,59 @@ from model import model, device
 from train import trainer
 from dataset import test_loader, sql_vocab
 import warnings
-warnings.filterwarnings("ignore")
 
-def load_model(output_file, model = model):
-    
-    checkpoint = torch.load(output_file)
-    
-    # Lightning wraps weights inside "state_dict" key
-    state_dict = checkpoint["state_dict"]
-    
-    model.load_state_dict(state_dict)
+if device.type == "cuda":
+    torch.set_float32_matmul_precision( 'high')
+
+def load_model(output_file, model=model):
+    checkpoint = torch.load(output_file, map_location=device)
+    model.load_state_dict(checkpoint["state_dict"])
     model.to(device)
     return model
 
-def main():
-    
-    output_file = Path("checkpoints/text_to_sql.ckpt")
-    
-    if not os.path.exists(output_file):
-        print("There is no model trained")
-        
-    else:
-        model = load_model(output_file).eval()
-        pred = trainer.predict(model, test_loader)
-        pred = [seq for batch in pred for seq in batch]  # type: ignore
-        pred_tokens = [seq.split() for seq in pred]
-        ref_tokens  = [sql_vocab.decode(ref).split() for ref, _ in test_loader.dataset]
-        score = bleu_score(pred_tokens, [[ref] for ref in ref_tokens])
-        print("BLEU:      ", score)
 
-if __name__ == "__main__": 
+def clean(tokens):
+    """Remove special tokens from token list."""
+    return [
+        t for t in tokens
+        if t not in ["<pad>", "<start>", "<end>", "<unk>"]
+    ]
+
+
+def main():
+    warnings.filterwarnings("ignore")
+    output_file = Path("checkpoints/text_to_sql.ckpt")
+
+    if not os.path.exists(output_file):
+        print("No trained model found")
+        return
+
+    model = load_model(output_file).eval()
+
+    # ── bulk predictions ──
+    preds = trainer.predict(model, test_loader)
+    preds = [seq for batch in preds for seq in batch]  # type: ignore
+    # preds: list of strings e.g. "select count ( * ) from students"
+
+    # ── tokenize predictions ──
+    pred_tokens = [
+        clean(sql_vocab.tokenizer(seq))
+        for seq in preds
+    ]
+
+    # ── tokenize references using itos directly ──
+    ref_tokens = [
+        clean([
+            sql_vocab.itos[idx.item()]
+            for idx in trg
+        ])
+        for _, trg in test_loader.dataset
+    ]
+
+    # ── compute corpus BLEU ──
+    score = bleu_score(pred_tokens, [[ref] for ref in ref_tokens])
+    print(f"BLEU: {score:.4f} ({score*100:.2f}%)")
+
+
+if __name__ == "__main__":
     main()
