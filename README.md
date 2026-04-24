@@ -16,6 +16,7 @@ TEXT-to-SQL Database Query/
 ├── model.py               # seq2seq model 
 ├── train.py               # Main training script
 ├── utils.py               # Model loading and evaluation
+└── requirements.txt       # Python dependencies
 ```
 
 ---
@@ -32,7 +33,7 @@ pip install -r requirements.txt
 
 ##  Dataset
 
-- **Name:** Anime Face Dataset  
+- **Name:**   Text-to-SQL
 - **Source:** [Kaggle Dataset Link](https://www.kaggle.com/datasets/meryentr/text-to-sql)  
 - **Description:** This dataset consists of 65354 entries designed to evaluate the performance of text-to-SQL models. Each entry contains a natural language text query and its corresponding SQL command. 
 
