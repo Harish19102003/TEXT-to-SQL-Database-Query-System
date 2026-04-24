@@ -63,6 +63,7 @@ class Transformer(pl.LightningModule):
         )
         self.fc_out    = nn.Linear(d_model, output_dim)
         self.criterion = nn.CrossEntropyLoss(ignore_index=pad_idx)
+        self.save_hyperparameters()
 
     def make_masks(self, src, trg):
         """Create padding masks and causal mask."""

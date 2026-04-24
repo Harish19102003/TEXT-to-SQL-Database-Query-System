@@ -1,10 +1,11 @@
 import torch
+import pytorch_lightning as pl
 from pathlib import Path
 import os
 from torchtext.data.metrics import bleu_score
-from model import model, device
-from train import trainer
-from dataset import test_loader, sql_vocab
+from model import model, device, Transformer
+from dataset import test_loader, sql_vocab, text_vocab, dataset, pad_idx
+from config import d_model, n_heads, n_layers, d_ff, dropout, max_seq_len
 import warnings
 
 if device.type == "cuda":
@@ -33,9 +34,20 @@ def main():
         print("No trained model found")
         return
 
-    model = load_model(output_file).eval()
+    model = Transformer.load_from_checkpoint(output_file,
+                                             input_dim  = len(text_vocab),
+    output_dim = len(sql_vocab),
+    d_model    = d_model,
+    n_heads    = n_heads,
+    n_layers   = n_layers,
+    d_ff       = d_ff,
+    dropout    = dropout,
+    max_len    = max_seq_len,
+    dataset    = dataset,
+    pad_idx    = pad_idx).eval()
 
     # ── bulk predictions ──
+    trainer = pl.Trainer(accelerator='gpu' if torch.cuda.is_available() else 'cpu',devices=1)
     preds = trainer.predict(model, test_loader)
     preds = [seq for batch in preds for seq in batch]  # type: ignore
     # preds: list of strings e.g. "select count ( * ) from students"

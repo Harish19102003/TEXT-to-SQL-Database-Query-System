@@ -9,3 +9,7 @@ tb_logs
 debug.ipynb
 
 data
+
+.vscode
+
+text-to-sql.zip
