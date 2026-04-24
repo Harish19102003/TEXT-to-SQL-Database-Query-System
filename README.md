@@ -8,7 +8,6 @@ This project implements **Sequence to Sequence(Seq2Seq)** using **PyTorch Lightn
 TEXT-to-SQL Database Query/
 ├── data                   # Data
 ├── README.md              # Documentation
-├── requirements.txt       # Dependencies
 ├── .gitignore             # Ignore cache/checkpoint/log files
 ├── checkpoints/           # Model checkpoints
 ├── config.py              # Model Hyperparameters
@@ -16,7 +15,7 @@ TEXT-to-SQL Database Query/
 ├── model.py               # seq2seq model 
 ├── train.py               # Main training script
 ├── utils.py               # Model loading and evaluation
-└── requirements.txt       # Python dependencies
+└── requirements.txt       # Dependencies
 ```
 
 ---
